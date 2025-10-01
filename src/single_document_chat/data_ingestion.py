@@ -65,6 +65,7 @@ class SingleDocIngestor:
             embeddings = self.model_loader.load_embeddings()
             vector_store = FAISS.from_documents(documents=chunks, embedding=embeddings)
             
+            # Save FAISS index locally
             vector_store.save_local(str(self.faiss_dir))
             self.log.info("FAISS index created and saved", faiss_path=str(self.faiss_dir))
             
