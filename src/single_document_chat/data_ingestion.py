@@ -8,6 +8,11 @@ from logger.custom_logger import CustomLogger
 from exception.custom_exception import DocumentPortalException
 from utils.model_loader import ModelLoader
 from datetime import datetime, timezone
+from model.models import PromptType
+from prompt.prompt_library import PROMPT_REGISTRY
+from langchain_core.output_parsers import StrOutputParser
+
+
 
 class SingleDocIngestor:
     
@@ -58,7 +63,7 @@ class SingleDocIngestor:
             self.log.info("Documents split into chunks", chunk_count=len(chunks))
             
             embeddings = self.model_loader.load_embeddings()
-            vector_store = FAISS.from_documents(documents=chunks, embeddings=embeddings)
+            vector_store = FAISS.from_documents(documents=chunks, embedding=embeddings)
             
             vector_store.save_local(str(self.faiss_dir))
             self.log.info("FAISS index created and saved", faiss_path=str(self.faiss_dir))
