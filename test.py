@@ -178,4 +178,6 @@ def test_document_ingestion_and_rag():
     except Exception as e:
         print(f"Test failed: {e}")
         sys.exit(1)
-        
+
+if __name__ == "__main__":
+    test_document_ingestion_and_rag()        
