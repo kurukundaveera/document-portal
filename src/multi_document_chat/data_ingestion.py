@@ -83,7 +83,20 @@ class DocumentIngestor:
 
     def _create_retriever(self, documents):
         try:
-            pass
+            splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=300)
+            chunks = splitter.split_documents(documents)
+            
+            self.log.info("Documents split into chunks", total_chunks=len(chunks), session_id=self.session_id)
+            embeddings = self.model_loader.load_embeddings()
+            vector_store = FAISS.from_documents(documents=chunks, embedding=embeddings)
+            
+            # Save FAISS index locally
+            vector_store.save_local(str(self.session_faiss_dir))
+            self.log.info("FAISS index created and saved", path=str(self.session_faiss_dir), session_id=self.session_id)
+            
+            retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k":5})
+            self.log.info("Retriever created successfully", session_id=self.session_id)
+            return retriever
         except Exception as e:
             self.log.error("Failed to create retriever", error=str(e))
             raise DocumentPortalException("Error creating retriever", sys)
