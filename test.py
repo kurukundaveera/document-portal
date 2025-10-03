@@ -135,30 +135,31 @@
 import os
 import sys
 import io
-from pathlib import Path
-from src.document_compare.data_ingestion import DocumentIngestion
-from src.document_compare.document_comparator import DocumentComparatorLLM    
+from pathlib import Path 
 from src.multi_document_chat.data_ingestion import DocumentIngestor
-from src.single_document_chat.retrieval import ConversationalRAG
+from src.multi_document_chat.retrieval import ConversationalRAG
 
 
 def test_document_ingestion_and_rag():
     try:
         test_files = [
+            
             "data/multi_doc_chat/market_analysis_report.docx",
             "data/multi_doc_chat/NIPS-2017-attention-is-all-you-need-Paper.pdf",
-            "data/multi_doc_chat/sample.pdf",
-            "data/multi_doc_chat/state_of_the_union.txt"
+            "data/multi_doc_chat/state_of_the_union.txt",
+            "data/multi_doc_chat/sample.pdf"
         ]
         
         uploaded_files = []
+        
         for file_path in test_files:
             if Path(file_path).exists():
                 uploaded_files.append(open(file_path, "rb"))
             else:
                 print(f"Test file does not exist: {file_path}")
+                
         if not uploaded_files:
-            print("No valid test files to upload")
+            print("No valid test files to upload.")
             sys.exit(1)
         
         ingestor = DocumentIngestor()     
@@ -170,13 +171,19 @@ def test_document_ingestion_and_rag():
         session_id = "test multi_doc_chat" 
         
         rag = ConversationalRAG(session_id=session_id, retriever=retriever)   
-        question = "What is attention is all you need paper about?"
+        #question = "What is attention is all you need paper about?"
+        #question = "What is president zelenskyy said in their speech in parliament?"
+        #question = "The two RL algormithms mainly differs in?"
+        question = "Russian putin what he says 6 days ago?"
         answer = rag.invoke(question)
         print("\n Question:", question)
         print("Answer:", answer)
-
+        if not uploaded_files:
+            print("No valid test files to upload")
+            sys.exit(1)
+        
     except Exception as e:
-        print(f"Test failed: {e}")
+        print(f"Test failed: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
