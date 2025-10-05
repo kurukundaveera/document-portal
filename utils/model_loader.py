@@ -1,12 +1,13 @@
 import os
 import sys
 from dotenv import load_dotenv
-from utils.config_loader import load_config
+
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
 from logger.custom_logger import CustomLogger
 from exception.custom_exception import DocumentPortalException
+
 log = CustomLogger().get_logger(__name__) # Initialize the customelogger
 
 class ModelLoader:
@@ -16,21 +17,21 @@ class ModelLoader:
     def __init__(self):
         load_dotenv()
         self._validate_env()
-        self.config=load_config()
+        self.config = load_config()
         log.info("Configuration loaded sucessfully", config_keys=list(self.config.keys()))
 
     def _validate_env(self):
-         """
-         Validate necessary environment variables.
-         Ensure API Keys exist.
-         """
-         required_vars=["GOOGLE_API_KEY","GROQ_API_KEY"]
-         self.api_keys={key:os.getenv(key) for key in required_vars}
-         missing = [k for k, v in self.api_keys.items() if not v]
-         if missing:
-             log.error("Missing environment variables", missing_vars=missing)
-             raise DocumentPortalException("Missing environment varaiable", sys)
-         log.info("Environment variables validated", available_keys=[k for k in self.api_keys if self.api_keys[k]])
+        """
+        Validate necessary environment variables.
+        Ensure API Keys exist.
+        """
+        required_vars=["GOOGLE_API_KEY","GROQ_API_KEY"]
+        self.api_keys={key:os.getenv(key) for key in required_vars}
+        missing = [k for k, v in self.api_keys.items() if not v]
+        if missing:
+            log.error("Missing environment variables", missing_vars=missing)
+            raise DocumentPortalException("Missing environment varaiable", sys)
+        log.info("Environment variables validated", available_keys=[k for k in self.api_keys if self.api_keys[k]])
 
     def load_embeddings(self):
         """
