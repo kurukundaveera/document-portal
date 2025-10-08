@@ -6,23 +6,14 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import uuid
 from typing import Iterable, List
-from exception.custom_exception import DocumentPortalException
 from logger.custom_logger import CustomLogger
-
-# Create a logger instance for this module/file
+from exception.custom_exception import DocumentPortalException
 log = CustomLogger().get_logger(__name__)
-
-
 SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".txt"}
 
 # ----------------------------- #
 # Helpers (file I/O + loading)  #
 # ----------------------------- #
-
-def _session_id():
-    """Generate a unique session ID"""
-    return str(uuid.uuid4())
-
 def generate_session_id(prefix: str = "session") -> str:
     ist = ZoneInfo("Asia/Kolkata")
     return f"{prefix}_{datetime.now(ist).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
@@ -54,3 +45,4 @@ def save_uploaded_files(uploaded_files: Iterable, target_dir: Path) -> List[Path
     except Exception as e:
         log.error("Failed to save uploaded files", error=str(e), dir=str(target_dir))
         raise DocumentPortalException("Failed to save uploaded files", e) from e
+    
